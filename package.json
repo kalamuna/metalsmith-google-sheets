@@ -1,10 +1,10 @@
 {
   "name": "metalsmith-kalastatic-dot-module",
-  "version": "0.0.1",
+  "version": "0.2.0",
   "description": "Metalsmith plugin to automatically ingest Drupal resources (css/js)",
   "main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "test": "mocha --reporter spec"
   },
   "repository": {
     "type": "git",
@@ -13,12 +13,26 @@
   "keywords": [
     "metalsmith",
     "kalastatic",
-    "prototyping"
+    "prototyping",
+    "drupal",
+    "plugin"
   ],
   "author": "Thiago de Mello Bueno <thiago@kalamuna.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/kalamuna/metalsmith-kalastatic-dot-module/issues"
   },
-  "homepage": "https://github.com/kalamuna/metalsmith-kalastatic-dot-module#readme"
+  "homepage": "https://github.com/kalamuna/metalsmith-kalastatic-dot-module#readme",
+  "devDependencies": {
+    "fs-equals": "^0.2.6",
+    "metalsmith": "^2.1.0",
+    "metalsmith-markdown": "^0.2.1",
+    "metalsmith-templates": "^0.7.0",
+    "mocha": "^2.3.4",
+    "rimraf": "^2.4.4",
+    "swig": "^1.4.2"
+  },
+  "dependencies": {
+    "request": "^2.67.0"
+  }
 }
