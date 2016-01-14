@@ -1,48 +1,69 @@
 /*
- * metalsmith-kalastatic-dot-module
+ * metalsmith-google-sheets
 */
 
 'use strict';
 
-var request = require("request");
+var GoogleSpreadsheet = require("google-spreadsheet"),
+    asForEach = require('async-foreach').forEach;
 
 module.exports = function plugin(opts) {
 
-    opts = opts || {};
+  opts = opts || {};
 
-    var stylesURL = opts.stylesURL,
-        scriptsURL = opts.scriptsURL;
+  // spreadsheet key is the long id in the sheets URL
+  // @todo, set it up to handle an array
+  var myGSheet = new GoogleSpreadsheet(opts.key);
+  var creds = {
+    client_email: opts.serviceAccountEmail,
+    private_key: opts.privateKey
+  }
 
-    return function through (files, metalsmith, done) {
+  return function through (files, metalsmith, done) {
 
-      function requestResource(url,cb) {
-        request(url, function(err,res,bod){
-          if( !err && res.statusCode === 200 ) {
-            cb(bod);
-          } else {
-            console.log(err);
-            cb(err);
-          }
+    var worksheets = {};
+
+    function getSheets(cb) {
+      myGSheet.useServiceAccountAuth(creds, function(err){
+        if( err ) console.log( "Error:", err);
+        // console.log( "myGSheet »»", myGSheet );
+        myGSheet.getInfo( function( err, info ){
+          var url = info.id.substr(0, info.id.indexOf("private/full"));
+          // console.log( "url", url );
+          if( err ) console.log(err);
+          var sheets = info.worksheets;
+          sheets.forEach(function(aSheet){
+            aSheet.getCells(function(err, cells){
+                var outputCells = {};
+                for( var aCell in cells ){
+                  var cellId = cells[aCell].id;
+                  var newId = cellId.substr( cellId.lastIndexOf("/")+1, cellId.length );
+                  outputCells[newId] = cells[aCell];
+                }
+                // console.log("»» cells",cells);
+                worksheets[aSheet.title] = {
+                  title: aSheet.title,
+                  id: aSheet.id,
+                  cells: outputCells
+                };
+                if(Object.keys(worksheets).length == sheets.length) {
+                  // console.log("»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»");
+                  allDone();
+                }
+            });
+          });
         });
-      }
+      });
+    }
 
-      function asyncDone(done){
-        if(metadata.kstatic.styles && metadata.kstatic.scripts) {
-          done();
-        }
-      }
-
+    function allDone(){
       var metadata = metalsmith.metadata();
-      metadata.kstatic = {};
-      requestResource(stylesURL, function(res){
-          metadata.kstatic.styles = res;
-          asyncDone(done);
-      });
-      requestResource(scriptsURL, function(res){
-        metadata.kstatic.scripts = res;
-        asyncDone(done);
-      });
+      metadata.gSheets = worksheets;
+      console.log("D2",worksheets["Sheet1"].cells["R2C4"]);
+      done();
+    }
 
+    getSheets(allDone);
 
-    };
+  }
 }
