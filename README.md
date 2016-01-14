@@ -7,6 +7,7 @@ See [node-google-spreadsheet docs](https://github.com/theoephraim/node-google-sp
 ## Installation
 
 ## Usage
+For now please review the tests
 
 ### CLI
 
