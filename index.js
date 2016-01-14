@@ -47,7 +47,6 @@ module.exports = function plugin(opts) {
                   cells: outputCells
                 };
                 if(Object.keys(worksheets).length == sheets.length) {
-                  // console.log("»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»»");
                   allDone();
                 }
             });
@@ -59,7 +58,7 @@ module.exports = function plugin(opts) {
     function allDone(){
       var metadata = metalsmith.metadata();
       metadata.gSheets = worksheets;
-      console.log("D2",worksheets["Sheet1"].cells["R2C4"]);
+      // console.log("D2",worksheets["Sheet1"].cells["R2C4"]);
       done();
     }
 
