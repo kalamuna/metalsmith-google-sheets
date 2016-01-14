@@ -7,7 +7,7 @@ See [node-google-spreadsheet docs](https://github.com/theoephraim/node-google-sp
 ## Installation
 
 ## Usage
-For now please review the tests
+For now please review the [tests](https://github.com/kalamuna/metalsmith-google-sheets/tree/master/test)
 
 ### CLI
 
