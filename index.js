@@ -48,17 +48,13 @@ return function through (files, metalsmith, done) {
 
         // if opts.publicSheet
         // else if opts.privateSheet
-        if(key.private){
-          loadPrivateSheet(myGSheet,creds);
-        } else {
-          loadPublicSheet(nyGSheet);
-        }
+        loadSheets(myGSheet,creds);
       }
     }
   }
 }
 
-function loadPrivateSheet(creds){
+function loadSheets(myGSheet,creds){
   myGSheet.useServiceAccountAuth(creds, function(err){
     if( err ) console.log( "Error:", err);
     console.log( "myGSheet »»", myGSheet );
@@ -76,9 +72,9 @@ function loadPrivateSheet(creds){
             outputCells[newId] = cells[aCell];
           }
           // console.log("»» cells",cells);
+          spreadSheetLoaded()
         });
-
-loadPublicSheet(nyGSheet);      })
+      });
     };
   });
 }
