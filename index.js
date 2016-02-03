@@ -4,8 +4,7 @@
 
 'use strict';
 
-var GoogleSpreadsheet = require("google-spreadsheet"),
-    asForEach = require('async-foreach').forEach;
+var GoogleSpreadsheet = require("google-spreadsheet");
 
 module.exports = function plugin(opts) {
 
@@ -22,7 +21,6 @@ module.exports = function plugin(opts) {
   return function through (files, metalsmith, done) {
 
     var worksheets = {};
-
     function getSheets(cb) {
       myGSheet.useServiceAccountAuth(creds, function(err){
         if( err ) console.log( "Error:", err);
@@ -33,6 +31,16 @@ module.exports = function plugin(opts) {
           if( err ) console.log(err);
           var sheets = info.worksheets;
           sheets.forEach(function(aSheet){
+            var sheetRows = [];
+            aSheet.getRows(function(err, rows){
+              if( err ){
+                console.log(err);
+              } else {
+                for( var row in rows ) {
+                  sheetRows.unshift(rows[row]);
+                }
+              }
+            });
             aSheet.getCells(function(err, cells){
                 var outputCells = {};
                 for( var aCell in cells ){
@@ -40,11 +48,11 @@ module.exports = function plugin(opts) {
                   var newId = cellId.substr( cellId.lastIndexOf("/")+1, cellId.length );
                   outputCells[newId] = cells[aCell];
                 }
-                // console.log("»» cells",cells);
                 worksheets[aSheet.title] = {
                   title: aSheet.title,
                   id: aSheet.id,
-                  cells: outputCells
+                  cells: outputCells,
+                  rows: sheetRows
                 };
                 if(Object.keys(worksheets).length == sheets.length) {
                   allDone();
@@ -58,7 +66,6 @@ module.exports = function plugin(opts) {
     function allDone(){
       var metadata = metalsmith.metadata();
       metadata.gSheets = worksheets;
-      // console.log("D2",worksheets["Sheet1"].cells["R2C4"]);
       done();
     }
 
