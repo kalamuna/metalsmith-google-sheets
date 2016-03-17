@@ -1,6 +1,6 @@
 {
   "name": "metalsmith-google-sheets",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Metalsmith plugin to ingest google-sheets using node-google-spreadsheets",
   "main": "index.js",
   "scripts": {
